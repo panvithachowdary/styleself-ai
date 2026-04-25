@@ -9,7 +9,7 @@ const ProductCard = ({ item }) => {
   useEffect(() => {
     const fetchProduct = async () => {
       try {
-        const res = await axios.get("http://localhost:5000/api/shopping/search", {
+        const res = await axios.get("https://styleself-backend.onrender.com/api/shopping/search", {
           params: { q: item.searchQuery }
         });
 
@@ -82,7 +82,7 @@ function CompleteLook() {
     setResult(null);
 
     try {
-      const res = await axios.post("http://localhost:5000/api/style/generate", {
+      const res = await axios.post("https://styleself-backend.onrender.com/api/style/generate", {
         type: "Complete the look",
         occasion,
         user,

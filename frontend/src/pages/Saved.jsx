@@ -8,7 +8,7 @@ function Saved() {
 
   useEffect(() => {
     const fetchSaved = async () => {
-      const res = await axios.get(`http://localhost:5000/api/saved/${user._id}`);
+      const res = await axios.get(`https://styleself-backend.onrender.com/api/saved/${user._id}`);
       setData(res.data);
     };
 
@@ -32,7 +32,7 @@ function Saved() {
         className="delete-btn"
         onClick={async () => {
           await axios.delete(
-            `http://localhost:5000/api/saved/${outfit._id}`
+            `https://styleself-backend.onrender.com/api/saved/${outfit._id}`
           );
 
           // refresh list after delete

@@ -10,7 +10,7 @@ const [selectedLook, setSelectedLook] = useState([]);
   const user = JSON.parse(localStorage.getItem("user"));
 
   const loadWardrobe = async () => {
-    const res = await axios.get(`http://localhost:5000/api/wardrobe/${user._id}`);
+    const res = await axios.get(`https://styleself-backend.onrender.com/api/wardrobe/${user._id}`);
     setItems(res.data);
   };
 
@@ -44,7 +44,7 @@ const [selectedLook, setSelectedLook] = useState([]);
       occasion: form.get("occasion")
     };
 
-    await axios.post("http://localhost:5000/api/wardrobe/add", newItem);
+    await axios.post("https://styleself-backend.onrender.com/api/wardrobe/add", newItem);
 
     e.target.reset();
     loadWardrobe();

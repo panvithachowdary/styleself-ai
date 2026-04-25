@@ -27,7 +27,7 @@ function BuyOutfit() {
 
     try {
       const styleRes = await axios.post(
-        "http://localhost:5000/api/style/generate",
+        "https://styleself-backend.onrender.com/api/style/generate",
         {
           type: "Buy a new outfit",
           occasion,
@@ -43,7 +43,7 @@ function BuyOutfit() {
       const productsWithImages = await Promise.all(
         styleRes.data.products.map(async (item) => {
           const shopRes = await axios.get(
-            "http://localhost:5000/api/shopping/search",
+            "https://styleself-backend.onrender.com/api/shopping/search",
             {
               params: {
                 // 🔥 STRONG budget enforcement in search
@@ -80,7 +80,7 @@ function BuyOutfit() {
     }
 
     try {
-      await axios.post("http://localhost:5000/api/saved/add", {
+      await axios.post("https://styleself-backend.onrender.com/api/saved/add", {
         userId: user._id,
         title: styleData.title,
         products: styleData.products
