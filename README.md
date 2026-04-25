@@ -1,4 +1,4 @@
-# StyleSelf AI 👗✨
+# StyleSelf AI
 
 An AI-powered fashion styling web app that helps users:
 
