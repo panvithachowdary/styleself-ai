@@ -4,7 +4,7 @@ import "../App.css";
 
 function BuyOutfit() {
   const [occasion, setOccasion] = useState("");
-  const [budget, setBudget] = useState("");
+  const [budget, setBudget] = useState(2000);
   const [loading, setLoading] = useState(false);
   const [styleData, setStyleData] = useState(null);
 
@@ -19,11 +19,7 @@ function BuyOutfit() {
     setLoading(true);
     setStyleData(null);
 
-    // 🔥 FIX: normalize budget
-    const cleanBudget =
-      budget && !budget.toLowerCase().includes("under")
-        ? `under ${budget}`
-        : budget;
+    const cleanBudget = `under ${budget}`;
 
     try {
       const styleRes = await axios.post(
@@ -32,13 +28,9 @@ function BuyOutfit() {
           type: "Buy a new outfit",
           occasion,
           user,
-          itemDetails: `Budget: ${
-            cleanBudget || user?.budget || "No budget specified"
-          }`
+          itemDetails: `Budget: ${cleanBudget}`
         }
       );
-
-      const budgetText = cleanBudget || user?.budget || "";
 
       const productsWithImages = await Promise.all(
         styleRes.data.products.map(async (item) => {
@@ -46,8 +38,7 @@ function BuyOutfit() {
             "https://styleself-backend.onrender.com/api/shopping/search",
             {
               params: {
-                // 🔥 STRONG budget enforcement in search
-                q: `${item.searchQuery} ${budgetText} affordable India under ${budgetText}`
+                q: `${item.searchQuery} ${cleanBudget} affordable India`
               }
             }
           );
@@ -86,7 +77,7 @@ function BuyOutfit() {
         products: styleData.products
       });
 
-      alert("Outfit saved ❤️");
+      alert("Outfit saved");
     } catch (err) {
       alert("Error saving outfit");
     }
@@ -95,35 +86,39 @@ function BuyOutfit() {
   return (
     <div className="auth-page">
       <div className="auth-card large-card">
-        <h1>Buy a New Outfit</h1>
-        <p>Get personalized outfit recommendations with real shopping images.</p>
+        <p className="eyebrow">AI STYLIST</p>
+        <h1>Generate an Outfit</h1>
+        <p>
+          Type your occasion and select your budget. StyleSelf will create a
+          complete look with real shopping links.
+        </p>
 
         <input
-          placeholder="Enter occasion, example: interview, wedding"
+          placeholder="Type occasion, example: interview, wedding, party"
           value={occasion}
           onChange={(e) => setOccasion(e.target.value)}
         />
 
-        <input
-          placeholder="Budget, example: under 2000"
-          value={budget}
-          onChange={(e) => setBudget(e.target.value)}
-        />
+        <div className="budget-box">
+          <label>Budget: ₹{budget}</label>
+          <input
+            type="range"
+            min="500"
+            max="10000"
+            step="500"
+            value={budget}
+            onChange={(e) => setBudget(e.target.value)}
+          />
+        </div>
 
         <button onClick={generateOutfit} disabled={loading}>
-          {loading ? "✨ Styling your look..." : "Generate Outfit"}
+          {loading ? "Styling your look..." : "Generate Outfit"}
         </button>
 
-        {/* 🔥 Loading Skeleton */}
         {loading && (
-          <div className="pinterest-grid">
-            {[1, 2, 3, 4].map((_, i) => (
-              <div className="pinterest-card skeleton" key={i}>
-                <div className="skeleton-img"></div>
-                <div className="skeleton-text"></div>
-                <div className="skeleton-text small"></div>
-              </div>
-            ))}
+          <div className="generating">
+            <div className="gen-spinner"></div>
+            <p>Finding your perfect outfit...</p>
           </div>
         )}
 
@@ -132,7 +127,7 @@ function BuyOutfit() {
             <h2>{styleData.title}</h2>
             <p className="style-note">{styleData.summary}</p>
 
-            <button onClick={saveOutfit}>Save Outfit ❤️</button>
+            <button onClick={saveOutfit}>Save Outfit</button>
 
             {user?.pinterest && (
               <div className="pinterest-box">
@@ -157,9 +152,8 @@ function BuyOutfit() {
                   />
 
                   <div className="pinterest-card-content">
+                    <p className="outfit-category">{item.type}</p>
                     <h3>{item.shoppingTitle || item.name}</h3>
-                    <p>{item.type}</p>
-
                     {item.price && <p>{item.price}</p>}
 
                     <a
@@ -172,7 +166,7 @@ function BuyOutfit() {
                       target="_blank"
                       rel="noreferrer"
                     >
-                      View Product
+                      Shop Now →
                     </a>
                   </div>
                 </div>
