@@ -914,4 +914,80 @@ form button,
 .auth-card > button {
   width: 100% !important;
 }
+.form-full {
+  grid-column: 1 / -1;
+  width: 100%;
+}
+
+.form-full button,
+.wardrobe-suggest-btn {
+  width: 100% !important;
+}
+
+.wardrobe-suggest-btn {
+  margin-top: 14px;
+}
+/* FINAL WARDROBE BUTTON FIX */
+.wardrobe-form {
+  display: grid !important;
+  grid-template-columns: 1fr 1fr !important;
+  gap: 14px !important;
+}
+
+.wardrobe-form .form-full {
+  grid-column: 1 / -1 !important;
+  width: 100% !important;
+}
+
+.wardrobe-form .form-full button {
+  width: 100% !important;
+  display: block !important;
+}
+
+.wardrobe-suggest-btn {
+  width: 100% !important;
+  display: block !important;
+  margin-top: 14px !important;
+}
+/* FORCE BOTH BUTTONS FULL WIDTH */
+.form-full button,
+.wardrobe-suggest-btn {
+  width: 100% !important;
+  display: block !important;
+}
+
+/* Ensure form grid behaves correctly */
+.wardrobe-form {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+
+.form-full {
+  grid-column: 1 / -1;
+}
+/* ===== WARDROBE FINAL BUTTON FIX ===== */
+
+.wardrobe-form {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+
+/* FORCE FULL WIDTH */
+.form-full {
+  grid-column: 1 / -1;
+}
+
+.form-full button {
+  width: 100%;
+  display: block;
+}
+
+/* SUGGEST BUTTON */
+.wardrobe-suggest-btn {
+  width: 100%;
+  display: block;
+  margin-top: 16px;
+}
 }

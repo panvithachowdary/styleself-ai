@@ -6,11 +6,13 @@ function Wardrobe() {
   const [items, setItems] = useState([]);
   const [occasion, setOccasion] = useState("");
   const [suggestion, setSuggestion] = useState("");
-const [selectedLook, setSelectedLook] = useState([]);
+  const [selectedLook, setSelectedLook] = useState([]);
+
   const user = JSON.parse(localStorage.getItem("user"));
+  const API = "https://styleself-backend.onrender.com";
 
   const loadWardrobe = async () => {
-    const res = await axios.get(`https://styleself-backend.onrender.com/api/wardrobe/${user._id}`);
+    const res = await axios.get(`${API}/api/wardrobe/${user._id}`);
     setItems(res.data);
   };
 
@@ -32,6 +34,12 @@ const [selectedLook, setSelectedLook] = useState([]);
 
     const form = new FormData(e.target);
     const imageFile = form.get("image");
+
+    if (!imageFile || imageFile.size === 0) {
+      alert("Please upload/capture an image");
+      return;
+    }
+
     const imageBase64 = await convertToBase64(imageFile);
 
     const newItem = {
@@ -41,10 +49,10 @@ const [selectedLook, setSelectedLook] = useState([]);
       color: form.get("color"),
       size: form.get("size"),
       style: form.get("style"),
-      occasion: form.get("occasion")
+      occasion: form.get("occasion"),
     };
 
-    await axios.post("https://styleself-backend.onrender.com/api/wardrobe/add", newItem);
+    await axios.post(`${API}/api/wardrobe/add`, newItem);
 
     e.target.reset();
     loadWardrobe();
@@ -55,39 +63,44 @@ const [selectedLook, setSelectedLook] = useState([]);
       alert("Enter occasion first");
       return;
     }
-  
+
     if (items.length < 2) {
       alert("Add at least 2 wardrobe items");
       return;
     }
-  
-    const top = items.find((i) => i.category.toLowerCase().includes("top"));
-    const bottom = items.find((i) => i.category.toLowerCase().includes("bottom"));
-    const dress = items.find((i) => i.category.toLowerCase().includes("dress"));
-  
+
+    const top = items.find((i) =>
+      i.category.toLowerCase().includes("top")
+    );
+    const bottom = items.find((i) =>
+      i.category.toLowerCase().includes("bottom")
+    );
+    const dress = items.find((i) =>
+      i.category.toLowerCase().includes("dress")
+    );
+
     if (dress) {
       setSelectedLook([dress]);
       setSuggestion(
-        `For ${occasion}, wear your ${dress.color} ${dress.style} dress. This look is selected from your saved wardrobe.`
+        `For ${occasion}, wear your ${dress.color} ${dress.style} dress.`
       );
     } else if (top && bottom) {
       setSelectedLook([top, bottom]);
       setSuggestion(
-        `For ${occasion}, pair your ${top.color} ${top.style} top with your ${bottom.color} ${bottom.style} bottom. This outfit is created only from your wardrobe.`
+        `For ${occasion}, pair your ${top.color} ${top.style} top with ${bottom.color} ${bottom.style} bottom.`
       );
     } else {
       setSelectedLook([items[0], items[1]]);
-      setSuggestion(
-        `For ${occasion}, combine these two wardrobe items for a balanced look.`
-      );
+      setSuggestion(`For ${occasion}, combine these items.`);
     }
   };
 
   return (
     <div className="auth-page">
       <div className="auth-card large-card">
+
+        <p className="eyebrow">MY CLOSET</p>
         <h1>Style from My Wardrobe</h1>
-        <p>Upload or capture your clothes and get outfit combinations from your own wardrobe.</p>
 
         <input
           placeholder="Occasion to style for"
@@ -95,59 +108,68 @@ const [selectedLook, setSelectedLook] = useState([]);
           onChange={(e) => setOccasion(e.target.value)}
         />
 
-        <form onSubmit={addItem} className="form-grid">
-        <label className="upload-box">
-  📷 Upload / Capture Clothing Photo
-  <input
-    type="file"
-    name="image"
-    accept="image/*"
-    capture="environment"
-    required
-  />
-  <p style={{ fontSize: "13px", marginTop: "6px", color: "#666" }}>
-  On mobile: opens camera 📷 | On desktop: upload image
-</p>
-</label>
-          <input name="category" placeholder="Category: top, bottom, dress" required />
+        {/* FORM */}
+        <form onSubmit={addItem} className="wardrobe-form">
+
+          <div className="form-full">
+            <label className="upload-box">
+              Upload / Capture Clothing Photo
+              <input
+                type="file"
+                name="image"
+                accept="image/*"
+                capture="environment"
+                required
+              />
+            </label>
+          </div>
+
+          <input name="category" placeholder="Category" required />
           <input name="color" placeholder="Color" required />
           <input name="size" placeholder="Size" required />
-          <input name="style" placeholder="Style: casual, ethnic, formal" required />
+          <input name="style" placeholder="Style" required />
           <input name="occasion" placeholder="Suitable occasion" required />
-          <button type="submit">Add Wardrobe Item</button>
+
+          {/* ✅ FULL WIDTH BUTTON */}
+          <div className="form-full">
+            <button type="submit">ADD WARDROBE ITEM</button>
+          </div>
+
         </form>
 
-        <button onClick={suggestOutfit}>Suggest Outfit From My Wardrobe</button>
+        {/* ✅ FULL WIDTH SUGGEST BUTTON */}
+        <button className="wardrobe-suggest-btn" onClick={suggestOutfit}>
+          SUGGEST OUTFIT FROM MY WARDROBE
+        </button>
 
+        {/* RESULT */}
         {suggestion && (
-  <div className="style-explain">
-    <h3>Suggested Wardrobe Look</h3>
+          <div className="style-explain">
+            <h3>Suggested Look</h3>
 
-    <div className="selected-look-grid">
-      {selectedLook.map((item, index) => (
-        <div className="wardrobe-card" key={index}>
-          <img src={item.image} alt={item.category} />
-          <h3>{item.category}</h3>
-          <p>{item.color} • {item.size}</p>
-          <p>{item.style} • {item.occasion}</p>
-        </div>
-      ))}
-    </div>
+            <div className="selected-look-grid">
+              {selectedLook.map((item, index) => (
+                <div className="wardrobe-card" key={index}>
+                  <img src={item.image} alt="" />
+                  <h3>{item.category}</h3>
+                </div>
+              ))}
+            </div>
 
-    <p>{suggestion}</p>
-  </div>
-)}
+            <p>{suggestion}</p>
+          </div>
+        )}
 
+        {/* ITEMS */}
         <div className="wardrobe-grid">
           {items.map((item, index) => (
             <div className="wardrobe-card" key={index}>
-              <img src={item.image} alt={item.category} />
+              <img src={item.image} alt="" />
               <h3>{item.category}</h3>
-              <p>{item.color} • {item.size}</p>
-              <p>{item.style} • {item.occasion}</p>
             </div>
           ))}
         </div>
+
       </div>
     </div>
   );
